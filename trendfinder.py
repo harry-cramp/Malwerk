@@ -9,11 +9,12 @@ from collections import Counter
 malware_api_keywords = set()
 benign_api_keywords = set()
 
-if len(sys.argv) != 3:
-	raise Exception("Must specify directory of analysis output files to analyse!")
+if len(sys.argv) != 4:
+	raise Exception("Must specify both directories of analysis output files to analyse as well as the split factor as float!")
 
 benign_analysis_path = sys.argv[1]
 malware_analysis_path = sys.argv[2]
+split_factor = float(sys.argv[3])
 
 redundant_chars = ["*", "/", "(", ")", "[", "]", ";", "\\", ":"]
 
@@ -43,12 +44,12 @@ def process_tokens(line):
 
 def process_analysis(apidata, analysis_path):
 	files = os.listdir(analysis_path)
-	titles = api_words_dict.keys()
+	titles = apidata.api_words_dict.keys()
+	print(f"Analysing output files in {analysis_path}...")
 	for file_index in tqdm(range(len(files))):
 		analysis_file = files[file_index]
 		if not os.path.isfile(os.path.join(analysis_path, analysis_file)):
 			continue
-		#print(f"Analysing file {file}...")
 		f = open(os.path.join(analysis_path, analysis_file))
 		lines = f.readlines()
 		processing = False
@@ -60,7 +61,6 @@ def process_analysis(apidata, analysis_path):
 					continue
 				for title in titles:
 					if title in line:
-						#print(f"New processing title: {title}. Processing...")
 						processing = True
 						collecting_title = title
 			else:
@@ -70,6 +70,7 @@ def process_analysis(apidata, analysis_path):
 					continue
 				if re.match("\[\*\].*", line):
 					continue
+				line = line.split(".")[0]
 				try:
 					noted_apis[line]
 				except KeyError:
@@ -80,25 +81,25 @@ def process_analysis(apidata, analysis_path):
 					noted_apis[line] = True
 	return (apidata, len(files))
 
-malware_apidata, malware_count = process_analysis(ApiData(), <path>)
-benign_apidata, benign_count = process_analysis(ApiData(), <path>)
+malware_apidata, malware_count = process_analysis(ApiData(), malware_analysis_path)
+benign_apidata, benign_count = process_analysis(ApiData(), benign_analysis_path)
 					
 print("ANALYSIS RESULTS:\n")
-for title in titles:
+for title in benign_apidata.api_words_dict.keys():
 	if title == "Looking for private / public":
 		continue
 	print(f"{title.upper()}\n")
 	counter = Counter(malware_apidata.api_words_dict[title])
-	for data in counter.most_common(10):
+	for data in counter.most_common(20):
 		percentage = (data[1] / malware_count) * 100
 		compare_msg = ""
-		if data[0] in benign_apidata.api_words_dict.keys():
-			benign_data = api_words_dict[data[0]]
-			benign_percentage = (benign_data[1] / benign_count) * 100
-			compare_msg = " vs. {:.2f} for benign samples".format(benign_percentage)
-		print("{} - {:.2f}%{}".format(data[0], percentage, compare_msg))
+		if data[0] in benign_apidata.api_words_dict[title].keys():
+			benign_data = benign_apidata.api_words_dict[title][data[0]]
+			benign_percentage = (benign_data / benign_count) * 100
+			compare_msg = " vs. {:.2f}% for benign samples".format(benign_percentage)
+			if abs(percentage - benign_percentage) >= split_factor:
+				print("{} - {:.2f}%{}".format(data[0], percentage, compare_msg))
+				
 	print("\n\n")
-	#print(api_words_dict[title])
-	#print("\n\n")
 
 
