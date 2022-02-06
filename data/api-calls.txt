@@ -1,0 +1,16 @@
+Landroid/content/pm/PackageManager$NameNotFoundException
+Landroid/app/Activity
+Landroid/content/pm/ProviderInfo
+Landroid/content/Intent
+Landroid/content/pm/ResolveInfo
+Landroid/content/pm/PackageInstaller$SessionInfo
+Landroid/content/pm/PackageInstaller
+Ljavax/crypto/spec/IvParameterSpec
+Ljavax/crypto/Mac
+Ljavax/net/ssl/TrustManagerFactory
+Ljava/security/KeyStore
+Ljavax/net/ssl/SSLSession
+Ljavax/crypto/KeyGenerator
+Lorg/conscrypt/Conscrypt
+Ljava/net/Socket
+Ljava/net/Proxy
