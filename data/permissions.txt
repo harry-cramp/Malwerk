@@ -313,6 +313,7 @@ android.permission.WAKE_LOCK
 android.permission.WRITE_APN_SETTINGS
 android.permission.WRITE_BLOCKED_NUMBERS
 android.permission.WRITE_DREAM_STATE
+android.permission.WRITE_EXTERNAL_STORAGE
 android.permission.WRITE_GSERVICES
 android.permission.WRITE_MEDIA_STORAGE
 android.permission.WRITE_PROFILE
